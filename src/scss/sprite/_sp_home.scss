@@ -1,0 +1,22 @@
+// Sprites Map
+$sp_home: (
+	name: 'sp_home',
+	ratio: 2,
+	width: 38px,
+	height: 16px,
+	image: '../img/sprite/sp_home.png',
+	sprites: (
+	cb_bullet_home: (
+			offset-x: -20px,
+			offset-y: 0px,
+			width: 18px,
+			height: 14px,
+		),
+		facebook: (
+			offset-x: 0px,
+			offset-y: 0px,
+			width: 16px,
+			height: 16px,
+		),
+	)
+);
