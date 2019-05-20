@@ -7,7 +7,7 @@ var browserSync = require('browser-sync');
 var sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('sass',function(){
-  return gulp.src('src/scss/fitness.scss')
+  return gulp.src('src/scss/*.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({outputStyle: 'compressed'}))
     .pipe(sourcemaps.write())
