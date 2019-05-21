@@ -1,10 +1,12 @@
 @import 'common/reset';
 @import 'common/base';
-@import 'modules/sprite';
 @import 'modules/header';
 @import 'modules/home';
+@import 'import/sprite_mixin';
+@import 'import/sprite_maps';
 
 header {
-	background-color: red;
-	@include sprite($cb-bullet-home);
+	background-color: blue;
+	@include get-sprite('facebook', $sp_home);
+	background-size: 50px 50px;
 }

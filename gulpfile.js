@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const gulp = require('gulp');
 const sass = require('gulp-sass');
-const plumber = require('gulp-plumber');
 const handlebars = require('gulp-compile-handlebars');
 const gulpSort = require('gulp-sort');
 const notify = require('gulp-notify');
@@ -13,7 +12,7 @@ const sourcemaps = require('gulp-sourcemaps');
 
 const paths = {
   cssDest: 'src/css/',
-  cssSrc: 'src/scss',
+  cssSrc: 'src/scss/',
   spriteSrc: 'src/sprite/',
   spriteDest: 'src/img/sprite/',
   imgDest: 'src/img/'
@@ -69,31 +68,31 @@ gulp.task('sass',function(){
     .pipe(gulp.dest('src/css/'));
 });
 
-gulp.task('sprite',['makeSpriteMap']);
+gulp.task('sprite',['makeSprite', 'makeSpriteMap']);
 
-gulp.task('makeSprite',function() {
-  let stream_arr = [];
-  const folders = getFolders(paths.spriteSrc);
-  const options = {
-    spritesmith: folder => ({
-      imgPath: path.posix.relative(paths.cssDest, path.posix.join(paths.spriteDest, 'sp_' + folder + '.png')),
-      imgName: 'sp_' + folder + '.png',
-      cssName: '_sp_' + folder + '.scss',
-      cssFormat: 'scss',
-      padding: 4,
-      cssTemplate: './gulpconf/sprite_template.hbs',
-      cssSpritesheetName: 'sp_' + folder,
-      cssHandlebarsHelpers: {
-        sprite_ratio: 2
-      }
-    })
-  }
+gulp.task('makeSprite', function () {
+  var stream_arr = [];
+  var folders = getFolders(paths.spriteSrc);
+  var options = {
+    spritesmith: function (folder) {
+      return {
+        imgPath: path.posix.relative(paths.cssDest, path.posix.join(paths.spriteDest, 'sp_' + folder + '.png')),
+        imgName: 'sp_' + folder + '.png',
+        cssName: '_sp_' + folder + '.scss',
+        cssFormat: 'scss',
+        padding: 4,
+        cssTemplate: './gulpconf/sprite_template.hbs',
+        cssSpritesheetName: 'sp_' + folder,
+        cssHandlebarsHelpers: {
+          sprite_ratio: config.sprite_ratio.png
+        }
+      };
+    }
+  };
 
   if (folders) {
-    let spriteData = {}
-    folders.map(folder => {
-      spriteData = gulp.src(path.join(paths.spriteSrc, folder, '*.png'))
-        .pipe(plumber(globalOptions.notify))
+    folders.map(function (folder) {
+      var spriteData = gulp.src(path.join(paths.spriteSrc, folder, '*.png'))
         .pipe(gulpSort())
         .pipe(spritesmith(options.spritesmith(folder)));
       stream_arr.push(new Promise(function (resolve) {
@@ -106,30 +105,26 @@ gulp.task('makeSprite',function() {
           .pipe(gulp.dest(path.join(paths.cssSrc, 'sprite')))
           .on('end', resolve);
       }));
-    })
-
+    });
   }
-
   return Promise.all(stream_arr);
 });
 
 gulp.task('makeSpriteMap', ['makeSprite'], function () {
-  const folders = getFolders(paths.spriteSrc);
+  var folders = getFolders(paths.spriteSrc);
   if (!folders) return;
 
-  const options = {
+  var options = {
     maps: {
       handlebars: {
         prefix: 'sp_',
         path: path.posix.relative(path.posix.join(paths.cssSrc, 'import'),path.posix.join(paths.cssSrc, 'sprite')),
-        import: folders
+        import: getFolders(paths.spriteSrc)
       }
     }
   };
-  console.log(options.maps.handlebars.import)
 
   return gulp.src('gulpconf/sprite_maps_template.hbs')
-    .pipe(plumber(globalOptions.notify))
     .pipe(handlebars(options.maps.handlebars))
     .pipe(rename('_sprite_maps.scss'))
     .pipe(gulp.dest(path.join(paths.cssSrc, 'import')));
