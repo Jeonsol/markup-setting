@@ -2,8 +2,8 @@
 @import 'common/base';
 @import 'modules/header';
 @import 'modules/home';
-@import 'import/sprite_mixin';
 @import 'import/sprite_maps';
+@import 'import/sprite_mixin';
 
 header {
 	background-color: blue;
