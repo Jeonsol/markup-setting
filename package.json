@@ -22,5 +22,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Jeonsol/markup-setting.git"
+  },
+  "dependencies": {
+    "browser-sync": "^2.26.7",
+    "gulp-notify": "^3.2.0"
   }
 }
